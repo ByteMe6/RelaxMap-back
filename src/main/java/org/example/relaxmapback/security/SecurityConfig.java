@@ -24,7 +24,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter, AuthenticationEntryPoint authEntryPoint) {
+  public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter, AuthenticationEntryPoint authenticationEntryPoint) {
     http
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
@@ -32,7 +32,7 @@ public class SecurityConfig {
                     .requestMatchers("/auth/**").permitAll()
                     .anyRequest().authenticated()
             )
-            .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
