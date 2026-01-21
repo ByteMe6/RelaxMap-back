@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.example.relaxmapback.auth.dto.*;
+import org.example.relaxmapback.common.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,9 +32,9 @@ public class AuthController {
 
   @PostMapping("/register")
   @ApiResponses({
-          @ApiResponse(responseCode = "200", description = "Login success",
+          @ApiResponse(responseCode = "200", description = "Register success",
                   content = @Content(schema = @Schema(implementation = TokenResponse.class))),
-          @ApiResponse(responseCode = "401", description = "Invalid credentials",
+          @ApiResponse(responseCode = "409", description = "User already exists",
                   content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
   })
   public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
