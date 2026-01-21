@@ -52,6 +52,19 @@ public class AuthService {
     return new TokenResponse(access, refresh);
   }
 
+  public TokenResponse login(String email, String password) {
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Incorrect login or password"));
+
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+      throw new RuntimeException("Incorrect login or password");
+    }
+
+    String access = jwtUtil.generateAccessToken(email);
+    String refresh = jwtUtil.generateRefreshToken(email);
+
+    return new TokenResponse(access, refresh);
+  }
+
   public boolean exists(String email) {
     User user = userRepository.findByEmail(email).orElse(null);
 

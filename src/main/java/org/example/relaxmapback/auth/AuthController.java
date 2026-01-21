@@ -1,17 +1,17 @@
 package org.example.relaxmapback.auth;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import org.example.relaxmapback.auth.dto.RefreshRequest;
-import org.example.relaxmapback.auth.dto.RegisterRequest;
-import org.example.relaxmapback.auth.dto.TokenResponse;
+import org.example.relaxmapback.auth.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,6 +30,12 @@ public class AuthController {
   }
 
   @PostMapping("/register")
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "Login success",
+                  content = @Content(schema = @Schema(implementation = TokenResponse.class))),
+          @ApiResponse(responseCode = "401", description = "Invalid credentials",
+                  content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
   public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
     String name = request.name();
     String email = request.email();
@@ -37,9 +43,28 @@ public class AuthController {
 
     if (authService.exists(email)) {
       return ResponseEntity.status(HttpStatus.CONFLICT)
-              .body(Map.of("error", "User already exists"));
+              .body(new ErrorResponse("User already exists", System.currentTimeMillis(), 409));
     }
 
     return ResponseEntity.ok(authService.register(name, email, password));
+  }
+
+  @PostMapping("/login")
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "Login success",
+                  content = @Content(schema = @Schema(implementation = TokenResponse.class))),
+          @ApiResponse(responseCode = "401", description = "Invalid credentials",
+                  content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
+    String email = request.email();
+    String password = request.password();
+
+    if (!authService.exists(email)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+              .body(new ErrorResponse("Invalid credentials", System.currentTimeMillis(), 401));
+    }
+
+    return ResponseEntity.ok(authService.login(email, password));
   }
 }
