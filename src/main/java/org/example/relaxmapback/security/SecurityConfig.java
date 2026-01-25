@@ -24,12 +24,14 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter, AuthenticationEntryPoint authenticationEntryPoint) {
+  public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
     http
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/places/all").permitAll()
+                    .requestMatchers("/images/**").permitAll()
                     .requestMatchers("/users/{email}").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()

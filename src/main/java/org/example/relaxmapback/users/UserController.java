@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.example.relaxmapback.auth.AuthService;
 import org.example.relaxmapback.common.ErrorResponse;
 import org.example.relaxmapback.users.dto.UserResponse;
@@ -16,21 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
   private final UserService userService;
   private final AuthService authService;
-
-  public UserController(UserService userService, AuthService authService) {
-    this.userService = userService;
-    this.authService = authService;
-  }
 
   @GetMapping("/{email}")
   @ApiResponses({
           @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserResponse.class))),
           @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
   })
-
   public ResponseEntity<?> getUser(@PathVariable String email) {
     if (!authService.exists(email)) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User does not exists", System.currentTimeMillis(), 404));

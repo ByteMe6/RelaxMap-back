@@ -1,5 +1,6 @@
 package org.example.relaxmapback.auth;
 
+import lombok.RequiredArgsConstructor;
 import org.example.relaxmapback.auth.dto.TokenResponse;
 import org.example.relaxmapback.jwt.JwtUtil;
 import org.example.relaxmapback.users.User;
@@ -8,16 +9,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtUtil jwtUtil;
-
-  public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.jwtUtil = jwtUtil;
-  }
 
   public TokenResponse refresh(String refreshToken) {
     if (!jwtUtil.isValid(refreshToken)) {
