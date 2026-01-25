@@ -1,6 +1,7 @@
 package org.example.relaxmapback.places;
 
 import lombok.RequiredArgsConstructor;
+import org.example.relaxmapback.places.dto.PlaceRequest;
 import org.example.relaxmapback.storage.StorageProperties;
 import org.example.relaxmapback.users.User;
 import org.example.relaxmapback.users.UserRepository;
@@ -33,7 +34,7 @@ public class PlaceService {
     return placeRepository.findAll(pageable);
   }
 
-  public Place createPlace(String name, String placeType, String region, MultipartFile file, String email) throws IOException {
+  public Place createPlace(PlaceRequest request, MultipartFile file, String email) throws IOException {
     validateFile(file);
 
     String extension = getFileExtension(file.getOriginalFilename());
@@ -47,13 +48,12 @@ public class PlaceService {
     Place place = new Place();
     User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
-    place.setName(name);
-    place.setPlaceType(placeType);
-    place.setRegion(region);
+    place.setName(request.name());
+    place.setPlaceType(request.placeType());
+    place.setRegion(request.region());
+    place.setDescription(request.description());
     place.setImageName(filename);
     place.setUser(user);
-
-    System.out.println(place);
 
     return placeRepository.save(place);
   }

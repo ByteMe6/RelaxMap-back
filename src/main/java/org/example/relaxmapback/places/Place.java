@@ -26,6 +26,8 @@ public class Place {
   @Column(nullable = false)
   private String imageName;
 
+  private String description;
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
