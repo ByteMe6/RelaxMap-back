@@ -1,4 +1,4 @@
-package org.example.relaxmapback.exceptions;
+package org.example.relaxmapback.handlers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,8 +10,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ValidationExceptionHandler {
-  @ExceptionHandler
-  public ResponseEntity<Map<String, String>> handleValidExceptions(MethodArgumentNotValidException ex) {
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, String>> handleValid(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
 
     ex.getBindingResult().getFieldErrors().forEach(error -> {

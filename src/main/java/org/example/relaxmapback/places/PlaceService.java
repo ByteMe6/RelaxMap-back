@@ -1,7 +1,13 @@
 package org.example.relaxmapback.places;
 
 import lombok.RequiredArgsConstructor;
+import org.example.relaxmapback.common.PageResponse;
+import org.example.relaxmapback.exceptions.files.EmptyFileException;
+import org.example.relaxmapback.exceptions.files.TooLargeFileException;
+import org.example.relaxmapback.exceptions.files.UnsupportedContentTypeException;
+import org.example.relaxmapback.exceptions.users.UserNotExistsException;
 import org.example.relaxmapback.places.dto.PlaceRequest;
+import org.example.relaxmapback.places.dto.PlaceResponse;
 import org.example.relaxmapback.storage.StorageProperties;
 import org.example.relaxmapback.users.User;
 import org.example.relaxmapback.users.UserRepository;
@@ -24,17 +30,20 @@ public class PlaceService {
   private final UserRepository userRepository;
   private final StorageProperties storageProperties;
 
-  public Page<Place> getPlacesForUser(String email, Pageable pageable) {
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+  public PageResponse<PlaceResponse> getPlacesForUser(String email, Pageable pageable) {
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
+    Page<Place> placePage = placeRepository.findByUser(user, pageable);
 
-    return placeRepository.findByUser(user, pageable);
+    return this.toPageResponse(placePage);
   }
 
-  public Page<Place> getAllPlaces(Pageable pageable) {
-    return placeRepository.findAll(pageable);
+  public PageResponse<PlaceResponse> getAllPlaces(Pageable pageable) {
+    Page<Place> placePage = placeRepository.findAll(pageable);
+
+    return this.toPageResponse(placePage);
   }
 
-  public Place createPlace(PlaceRequest request, MultipartFile file, String email) throws IOException {
+  public PlaceResponse createPlace(PlaceRequest request, MultipartFile file, String email) throws IOException {
     validateFile(file);
 
     String extension = getFileExtension(file.getOriginalFilename());
@@ -46,7 +55,7 @@ public class PlaceService {
     Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
     Place place = new Place();
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
 
     place.setName(request.name());
     place.setPlaceType(request.placeType());
@@ -55,22 +64,52 @@ public class PlaceService {
     place.setImageName(filename);
     place.setUser(user);
 
-    return placeRepository.save(place);
+    placeRepository.save(place);
+
+    return new PlaceResponse(
+            place.getId(),
+            place.getName(),
+            place.getPlaceType(),
+            place.getRegion(),
+            place.getDescription(),
+            place.getImageName()
+    );
+  }
+
+  private PageResponse<PlaceResponse> toPageResponse(Page<Place> page) {
+    return new PageResponse<>(
+            page.getContent().stream().map(this::toResponse).toList(),
+            page.getTotalElements(),
+            page.getTotalPages(),
+            page.getNumber(),
+            page.getSize()
+    );
+  }
+
+  private PlaceResponse toResponse(Place place) {
+    return new PlaceResponse(
+            place.getId(),
+            place.getName(),
+            place.getPlaceType(),
+            place.getRegion(),
+            place.getDescription(),
+            place.getImageName()
+    );
   }
 
   private void validateFile(MultipartFile file) {
     if (file.isEmpty()) {
-      throw new RuntimeException("File is empty");
+      throw new EmptyFileException("File is empty");
     }
 
     if (file.getSize() > storageProperties.getMaxFileSize().toBytes()) {
-      throw new RuntimeException("File is too large");
+      throw new TooLargeFileException("File is too large");
     }
 
     String contentType = file.getContentType();
 
     if (contentType == null || !storageProperties.getAllowedMimeTypes().contains(contentType)) {
-      throw new RuntimeException("Unsupported content type");
+      throw new UnsupportedContentTypeException("Unsupported content type");
     }
   }
 

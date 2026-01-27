@@ -1,6 +1,7 @@
 package org.example.relaxmapback.images;
 
 import lombok.RequiredArgsConstructor;
+import org.example.relaxmapback.exceptions.resources.ResourceNotExistsException;
 import org.example.relaxmapback.storage.StorageProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -20,7 +21,13 @@ public class ImageService {
   public Resource getImage(String imageName) throws MalformedURLException {
     Path imagePath = Paths.get(storageProperties.getUploadDir()).resolve(imageName);
 
-    return new UrlResource(imagePath.toUri());
+    Resource resource = new UrlResource(imagePath.toUri());
+
+    if (!resource.exists()) {
+      throw new ResourceNotExistsException("Resource is not exists");
+    }
+
+    return resource;
   }
 
   public String probeContentType(String imageName) {

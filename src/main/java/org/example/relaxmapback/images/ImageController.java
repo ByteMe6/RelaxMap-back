@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.example.relaxmapback.common.ErrorResponse;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +29,6 @@ public class ImageController {
   })
   public ResponseEntity<?> getImage(@PathVariable String imageName) throws MalformedURLException {
     Resource resource = imageService.getImage(imageName);
-
-    if (!resource.exists()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Image not exists", System.currentTimeMillis(), 404));
-    }
-
     String contentType = imageService.probeContentType(imageName);
 
     return ResponseEntity.ok()
