@@ -21,7 +21,7 @@ import java.io.IOException;
 public class PlaceController {
   private final PlaceService placeService;
 
-  @GetMapping
+  @GetMapping("/for-user")
   public ResponseEntity<PageResponse<PlaceResponse>> getPlacesForUser(Authentication auth, Pageable pageable) {
     return ResponseEntity.ok(placeService.getPlacesForUser(auth.getName(), pageable));
   }

@@ -21,7 +21,7 @@ public class ReviewController {
     return ResponseEntity.ok(reviewService.getAllReviews());
   }
 
-  @GetMapping("/place/{id}")
+  @GetMapping("/for-place/{id}")
   public ResponseEntity<List<ReviewResponse>> getReviewsForPlace(@PathVariable Long id) {
     return ResponseEntity.ok(reviewService.getReviewsForPlace(id));
   }
@@ -32,7 +32,9 @@ public class ReviewController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<ReviewResponse> deleteReview(@PathVariable Long id, Authentication auth) {
-    return ResponseEntity.ok(reviewService.deleteReview(id, auth.getName()));
+  public ResponseEntity<Void> deleteReview(@PathVariable Long id, Authentication auth) {
+    reviewService.deleteReview(id, auth.getName());
+
+    return ResponseEntity.noContent().build();
   }
 }

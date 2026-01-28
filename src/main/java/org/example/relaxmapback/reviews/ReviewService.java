@@ -73,7 +73,7 @@ public class ReviewService {
     );
   }
 
-  public ReviewResponse deleteReview(Long id, String email) {
+  public void deleteReview(Long id, String email) {
     User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
     Review review = reviewRepository.findById(id).orElseThrow(() -> new ReviewNotExistsException("Review is not exists"));
 
@@ -82,13 +82,5 @@ public class ReviewService {
     }
 
     reviewRepository.delete(review);
-
-    return new ReviewResponse(
-            review.getId(),
-            review.getText(),
-            review.getRating(),
-            review.getUser().getId(),
-            review.getPlace().getId()
-    );
   }
 }
