@@ -1,23 +1,25 @@
 package org.example.relaxmapback.users;
 
 import lombok.RequiredArgsConstructor;
-import org.example.relaxmapback.auth.AuthService;
+import org.example.relaxmapback.exceptions.users.IdOrEmailRequiredException;
 import org.example.relaxmapback.users.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
   private final UserService userService;
-  private final AuthService authService;
 
-  @GetMapping("/{email}")
-  public ResponseEntity<UserResponse> getUser(@PathVariable String email) {
-    return ResponseEntity.ok(userService.getUser(email));
+  @GetMapping
+  public ResponseEntity<UserResponse> getUser(
+          @RequestParam(required = false) Long id,
+          @RequestParam(required = false) String email
+  ) {
+    if (id != null) return ResponseEntity.ok(userService.getUserById(id));
+    if (email != null) return ResponseEntity.ok(userService.getUserByEmail(email));
+
+    throw new IdOrEmailRequiredException("Id or email is required");
   }
 }

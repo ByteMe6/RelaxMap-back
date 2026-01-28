@@ -10,8 +10,14 @@ import org.springframework.stereotype.Service;
 public class UserService {
   private final UserRepository userRepository;
 
-  public UserResponse getUser(String email) {
+  public UserResponse getUserByEmail(String email) {
     User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
+
+    return new UserResponse(user.getId(), user.getName(), user.getEmail());
+  }
+
+  public UserResponse getUserById(Long id) {
+    User user = userRepository.findById(id).orElseThrow(() -> new UserNotExistsException("User is not exists"));
 
     return new UserResponse(user.getId(), user.getName(), user.getEmail());
   }

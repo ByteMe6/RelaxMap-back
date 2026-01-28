@@ -3,6 +3,9 @@ package org.example.relaxmapback.users;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.relaxmapback.reviews.Review;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
