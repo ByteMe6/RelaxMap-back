@@ -4,15 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record PlaceRequest(
-        @NotBlank
+        @NotBlank(message = "Name is required")
         @Size(min = 3, max = 96, message = "Name must be at least 3 characters and no more than 96 characters")
         String name,
 
-        @NotBlank
+        @NotBlank(message = "Place type is required")
         @Size(min = 3, max = 96, message = "Place type must be at least 3 characters and no more than 96 characters")
         String placeType,
 
-        @NotBlank
+        @NotBlank(message = "Region is required")
         @Size(min = 3, max = 96, message = "Region must be at least 3 characters and no more than 96 characters")
         String region,
 

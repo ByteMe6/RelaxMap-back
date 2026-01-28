@@ -1,11 +1,13 @@
 package org.example.relaxmapback.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.example.relaxmapback.auth.dto.PasswordRequest;
 import org.example.relaxmapback.auth.dto.TokenResponse;
 import org.example.relaxmapback.exceptions.users.InvalidCredentialsException;
 import org.example.relaxmapback.exceptions.tokens.InvalidRefreshTokenException;
 import org.example.relaxmapback.exceptions.tokens.NotRefreshTokenException;
 import org.example.relaxmapback.exceptions.users.UserAlreadyExistsException;
+import org.example.relaxmapback.exceptions.users.UserNotExistsException;
 import org.example.relaxmapback.jwt.JwtUtil;
 import org.example.relaxmapback.users.User;
 import org.example.relaxmapback.users.UserRepository;
@@ -53,7 +55,7 @@ public class AuthService {
   }
 
   public TokenResponse login(String email, String password) {
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Invalid credentials"));
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new InvalidCredentialsException("Invalid credentials");
@@ -63,5 +65,16 @@ public class AuthService {
     String refresh = jwtUtil.generateRefreshToken(email);
 
     return new TokenResponse(access, refresh);
+  }
+
+  public void changePassword(String oldPassword, String newPassword, String email) {
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
+
+    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+      throw new InvalidCredentialsException("Invalid credentials");
+    }
+
+    user.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
   }
 }

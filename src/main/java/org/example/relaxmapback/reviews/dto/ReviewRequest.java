@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record ReviewRequest(
-        @NotBlank
+        @NotBlank(message = "Text is required")
         @Size(min = 20, max = 1000, message = "Name must be at least 20 characters and no more than 1000 characters")
         String text,
 
