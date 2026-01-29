@@ -66,14 +66,7 @@ public class PlaceService {
 
     placeRepository.save(place);
 
-    return new PlaceResponse(
-            place.getId(),
-            place.getName(),
-            place.getPlaceType(),
-            place.getRegion(),
-            place.getDescription(),
-            place.getImageName()
-    );
+    return this.toResponse(place);
   }
 
   private PageResponse<PlaceResponse> toPageResponse(Page<Place> page) {

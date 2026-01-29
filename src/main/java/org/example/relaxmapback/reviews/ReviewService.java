@@ -1,6 +1,7 @@
 package org.example.relaxmapback.reviews;
 
 import lombok.RequiredArgsConstructor;
+import org.example.relaxmapback.common.PageResponse;
 import org.example.relaxmapback.exceptions.access.AccessDeniedException;
 import org.example.relaxmapback.exceptions.places.PlaceNotExistsException;
 import org.example.relaxmapback.exceptions.reviews.ReviewNotExistsException;
@@ -11,9 +12,9 @@ import org.example.relaxmapback.reviews.dto.ReviewRequest;
 import org.example.relaxmapback.reviews.dto.ReviewResponse;
 import org.example.relaxmapback.users.User;
 import org.example.relaxmapback.users.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,33 +23,17 @@ public class ReviewService {
   private final UserRepository userRepository;
   private final PlaceRepository placeRepository;
 
-  public List<ReviewResponse> getAllReviews() {
-    List<Review> reviews = reviewRepository.findAll();
+  public PageResponse<ReviewResponse> getAllReviews(Pageable pageable) {
+    Page<Review> reviews = reviewRepository.findAll(pageable);
 
-    return reviews.stream()
-            .map(review -> new ReviewResponse(
-                    review.getId(),
-                    review.getText(),
-                    review.getRating(),
-                    review.getUser().getId(),
-                    review.getPlace().getId()
-            ))
-            .toList();
+    return this.toPageResponse(reviews);
   }
 
-  public List<ReviewResponse> getReviewsForPlace(Long id) {
+  public PageResponse<ReviewResponse> getReviewsForPlace(Long id, Pageable pageable) {
     Place place = placeRepository.findById(id).orElseThrow(() -> new PlaceNotExistsException("Place is not exists"));
-    List<Review> reviews = reviewRepository.findByPlace(place);
+    Page<Review> reviews = reviewRepository.findByPlace(place, pageable);
 
-    return reviews.stream()
-            .map(review -> new ReviewResponse(
-                    review.getId(),
-                    review.getText(),
-                    review.getRating(),
-                    review.getUser().getId(),
-                    review.getPlace().getId()
-            ))
-            .toList();
+    return this.toPageResponse(reviews);
   }
 
   public ReviewResponse createReview(ReviewRequest request, String email) {
@@ -82,5 +67,25 @@ public class ReviewService {
     }
 
     reviewRepository.delete(review);
+  }
+
+  private PageResponse<ReviewResponse> toPageResponse(Page<Review> page) {
+    return new PageResponse<>(
+            page.getContent().stream().map(this::toResponse).toList(),
+            page.getTotalElements(),
+            page.getTotalPages(),
+            page.getNumber(),
+            page.getSize()
+    );
+  }
+
+  private ReviewResponse toResponse(Review review) {
+    return new ReviewResponse(
+            review.getId(),
+            review.getText(),
+            review.getRating(),
+            review.getUser().getId(),
+            review.getPlace().getId()
+    );
   }
 }
