@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
   Page<Place> findByUser(User user, Pageable pageable);
+  List<Place> findByUser(User user);
 }
