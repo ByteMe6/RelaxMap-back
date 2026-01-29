@@ -44,4 +44,14 @@ public class AuthController {
 
     return ResponseEntity.ok().build();
   }
+
+  @PatchMapping("/change-name")
+  public ResponseEntity<Void> changeName(
+    @RequestBody @Valid NameRequest request,
+    Authentication auth
+  ) {
+    authService.changeName(request.newName(), auth.getName());
+
+    return ResponseEntity.ok().build();
+  }
 }

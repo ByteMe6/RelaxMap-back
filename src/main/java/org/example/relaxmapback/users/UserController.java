@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
   private final UserService userService;
 
-  @GetMapping
+  @GetMapping("/info")
   public ResponseEntity<UserResponse> getUser(
           @RequestParam(required = false) Long id,
           @RequestParam(required = false) String email

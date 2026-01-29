@@ -77,4 +77,11 @@ public class AuthService {
     user.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(user);
   }
+
+  public void changeName(String newName, String email) {
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
+
+    user.setName(newName);
+    userRepository.save(user);
+  }
 }
