@@ -5,6 +5,7 @@ import org.example.relaxmapback.common.PageResponse;
 import org.example.relaxmapback.exceptions.files.EmptyFileException;
 import org.example.relaxmapback.exceptions.files.TooLargeFileException;
 import org.example.relaxmapback.exceptions.files.UnsupportedContentTypeException;
+import org.example.relaxmapback.exceptions.places.PlaceNotExistsException;
 import org.example.relaxmapback.exceptions.users.UserNotExistsException;
 import org.example.relaxmapback.places.dto.PlaceRequest;
 import org.example.relaxmapback.places.dto.PlaceResponse;
@@ -29,6 +30,12 @@ public class PlaceService {
   private final PlaceRepository placeRepository;
   private final UserRepository userRepository;
   private final StorageProperties storageProperties;
+
+  public PlaceResponse getPlaceById(Long id) {
+    Place place = placeRepository.findById(id).orElseThrow(() -> new PlaceNotExistsException("Place is not exists"));
+
+    return this.toResponse(place);
+  }
 
   public PageResponse<PlaceResponse> getPlacesForUser(String email, Pageable pageable) {
     User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
