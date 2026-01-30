@@ -32,7 +32,7 @@ public class SecurityConfig {
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/places/all").permitAll()
                     .requestMatchers("/reviews/all").permitAll()
-                    .requestMatchers("/reviews/place/{id}").permitAll()
+                    .requestMatchers("/reviews/for-place/{id}").permitAll()
                     .requestMatchers("/images/**").permitAll()
                     .requestMatchers("/users/{email}").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
