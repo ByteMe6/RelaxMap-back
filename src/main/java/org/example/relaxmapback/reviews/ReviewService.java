@@ -8,10 +8,12 @@ import org.example.relaxmapback.exceptions.reviews.ReviewNotExistsException;
 import org.example.relaxmapback.exceptions.users.UserNotExistsException;
 import org.example.relaxmapback.places.Place;
 import org.example.relaxmapback.places.PlaceRepository;
+import org.example.relaxmapback.places.dto.PlaceResponse;
 import org.example.relaxmapback.reviews.dto.ReviewRequest;
 import org.example.relaxmapback.reviews.dto.ReviewResponse;
 import org.example.relaxmapback.users.User;
 import org.example.relaxmapback.users.UserRepository;
+import org.example.relaxmapback.users.dto.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,13 +51,7 @@ public class ReviewService {
 
     reviewRepository.save(review);
 
-    return new ReviewResponse(
-            review.getId(),
-            review.getText(),
-            review.getRating(),
-            review.getUser().getId(),
-            review.getPlace().getId()
-    );
+    return this.toResponse(review);
   }
 
   public void deleteReview(Long id, String email) {
@@ -84,8 +80,19 @@ public class ReviewService {
             review.getId(),
             review.getText(),
             review.getRating(),
-            review.getUser().getId(),
-            review.getPlace().getId()
+            new UserResponse(
+                    review.getUser().getId(),
+                    review.getUser().getName(),
+                    review.getUser().getEmail()
+            ),
+            new PlaceResponse(
+                    review.getPlace().getId(),
+                    review.getPlace().getName(),
+                    review.getPlace().getPlaceType(),
+                    review.getPlace().getRegion(),
+                    review.getPlace().getImageName(),
+                    review.getPlace().getImageName()
+            )
     );
   }
 }
