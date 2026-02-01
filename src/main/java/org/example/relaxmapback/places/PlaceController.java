@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.relaxmapback.common.PageResponse;
 import org.example.relaxmapback.places.dto.PlaceRequest;
 import org.example.relaxmapback.places.dto.PlaceResponse;
+import org.example.relaxmapback.places.dto.PlaceUpdateRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,5 +44,20 @@ public class PlaceController {
           Authentication auth
   ) throws IOException {
     return ResponseEntity.ok(placeService.createPlace(request, file, auth.getName()));
+  }
+
+  @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<PlaceResponse> patchPlace(
+          @PathVariable Long id,
+          @Valid @ModelAttribute PlaceUpdateRequest request,
+          @RequestParam(value = "file", required = false) MultipartFile file,
+          Authentication auth
+  ) throws IOException {
+    return ResponseEntity.ok(placeService.patchPlace(
+            id,
+            request,
+            file,
+            auth.getName()
+    ));
   }
 }

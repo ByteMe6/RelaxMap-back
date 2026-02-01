@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.FileNotFoundException;
+
 @RestControllerAdvice
 public class RuntimeExceptionsHandler {
   @ExceptionHandler(UserAlreadyExistsException.class)
@@ -80,6 +82,13 @@ public class RuntimeExceptionsHandler {
     return ResponseEntity.badRequest()
             .body(new ErrorResponse(ex.getMessage(), System.currentTimeMillis(), 400));
   }
+
+  @ExceptionHandler(FileNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleFileNotFound(FileNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse(ex.getMessage(), System.currentTimeMillis(), 404));
+  }
+
 
   @ExceptionHandler(PlaceNotExistsException.class)
   public ResponseEntity<ErrorResponse> handlePlaceNotExists(PlaceNotExistsException ex) {
