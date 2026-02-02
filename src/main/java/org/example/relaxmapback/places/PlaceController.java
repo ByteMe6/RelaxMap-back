@@ -60,4 +60,14 @@ public class PlaceController {
             auth.getName()
     ));
   }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deletePlace(
+          @PathVariable Long id,
+          Authentication auth
+  ) throws IOException {
+    placeService.deletePlace(id, auth.getName());
+
+    return ResponseEntity.noContent().build();
+  }
 }

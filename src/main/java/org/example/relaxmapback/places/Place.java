@@ -3,7 +3,10 @@ package org.example.relaxmapback.places;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.relaxmapback.reviews.Review;
 import org.example.relaxmapback.users.User;
+
+import java.util.List;
 
 @Entity
 @Table(name = "places")
@@ -31,4 +34,7 @@ public class Place {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Review> reviews;
 }

@@ -11,6 +11,8 @@ import org.example.relaxmapback.exceptions.users.UserNotExistsException;
 import org.example.relaxmapback.places.dto.PlaceRequest;
 import org.example.relaxmapback.places.dto.PlaceResponse;
 import org.example.relaxmapback.places.dto.PlaceUpdateRequest;
+import org.example.relaxmapback.reviews.Review;
+import org.example.relaxmapback.reviews.ReviewRepository;
 import org.example.relaxmapback.storage.StorageProperties;
 import org.example.relaxmapback.users.User;
 import org.example.relaxmapback.users.UserRepository;
@@ -25,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,6 +36,7 @@ public class PlaceService {
   private final PlaceRepository placeRepository;
   private final UserRepository userRepository;
   private final StorageProperties storageProperties;
+  private final ReviewRepository reviewRepository;
 
   public PlaceResponse getPlaceById(Long id) {
     Place place = placeRepository.findById(id).orElseThrow(() -> new PlaceNotExistsException("Place is not exists"));
@@ -93,6 +97,22 @@ public class PlaceService {
     placeRepository.save(place);
 
     return this.toResponse(place);
+  }
+
+  public void deletePlace(Long id, String email) throws IOException {
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
+    Place place = placeRepository.findById(id).orElseThrow(() -> new PlaceNotExistsException("Place is not exists"));
+
+    if (!place.getUser().getId().equals(user.getId())) {
+      throw new AccessDeniedException("You cannot delete someone else's place");
+    }
+
+    List<Review> reviews = place.getReviews();
+
+    deleteFile(place.getImageName());
+
+    reviewRepository.deleteAll(reviews);
+    placeRepository.delete(place);
   }
 
   private PageResponse<PlaceResponse> toPageResponse(Page<Place> page) {
