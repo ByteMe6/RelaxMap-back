@@ -29,12 +29,20 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/auth/refresh").permitAll()
+                    .requestMatchers("/auth/login").permitAll()
+                    .requestMatchers("/auth/register").permitAll()
+                    .requestMatchers("/auth/is-valid").permitAll()
+
                     .requestMatchers("/places/all").permitAll()
+
                     .requestMatchers("/reviews/all").permitAll()
                     .requestMatchers("/reviews/for-place/{id}").permitAll()
+
                     .requestMatchers("/images/**").permitAll()
+
                     .requestMatchers("/users/{email}").permitAll()
+
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()

@@ -3,6 +3,7 @@ package org.example.relaxmapback.auth;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.relaxmapback.auth.dto.*;
+import org.example.relaxmapback.jwt.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
   private final AuthService authService;
+  private final JwtUtil jwtUtil;
 
   @PostMapping("/refresh")
   public TokenResponse refresh(@RequestBody RefreshRequest request) {
@@ -47,11 +49,18 @@ public class AuthController {
 
   @PatchMapping("/change-name")
   public ResponseEntity<Void> changeName(
-    @RequestBody @Valid NameRequest request,
-    Authentication auth
+          @RequestBody @Valid NameRequest request,
+          Authentication auth
   ) {
     authService.changeName(request.newName(), auth.getName());
 
     return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/is-valid")
+  public ResponseEntity<ValidResponse> isTokenValid(
+          @RequestBody ValidRequest request
+  ) {
+    return ResponseEntity.ok(new ValidResponse(jwtUtil.isValid(request.token())));
   }
 }

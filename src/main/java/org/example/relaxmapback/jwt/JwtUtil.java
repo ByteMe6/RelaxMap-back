@@ -3,6 +3,7 @@ package org.example.relaxmapback.jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
