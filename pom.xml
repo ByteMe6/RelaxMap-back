@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.example</groupId>
     <artifactId>RelaxMap-back</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
     <name>RelaxMap-back</name>
     <description>RelaxMap-back</description>
 
