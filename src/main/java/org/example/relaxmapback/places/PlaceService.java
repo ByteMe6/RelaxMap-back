@@ -7,6 +7,7 @@ import org.example.relaxmapback.exceptions.files.EmptyFileException;
 import org.example.relaxmapback.exceptions.files.TooLargeFileException;
 import org.example.relaxmapback.exceptions.files.UnsupportedContentTypeException;
 import org.example.relaxmapback.exceptions.places.PlaceNotExistsException;
+import org.example.relaxmapback.exceptions.users.IdOrEmailRequiredException;
 import org.example.relaxmapback.exceptions.users.UserNotExistsException;
 import org.example.relaxmapback.places.dto.PlaceRequest;
 import org.example.relaxmapback.places.dto.PlaceResponse;
@@ -44,7 +45,7 @@ public class PlaceService {
     return this.toResponse(place);
   }
 
-  public PageResponse<PlaceResponse> getPlacesForUser(String email, Pageable pageable) {
+  public PageResponse<PlaceResponse> getPlacesForMe(String email, Pageable pageable) {
     User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
     Page<Place> placePage = placeRepository.findByUser(user, pageable);
 
@@ -53,6 +54,22 @@ public class PlaceService {
 
   public PageResponse<PlaceResponse> getAllPlaces(Pageable pageable) {
     Page<Place> placePage = placeRepository.findAll(pageable);
+
+    return this.toPageResponse(placePage);
+  }
+
+  public PageResponse<PlaceResponse> getPlacesForUser(Long id, String email, Pageable pageable) {
+    User user;
+
+    if (id != null) {
+      user = userRepository.findById(id).orElseThrow(() -> new UserNotExistsException("User is not exists"));
+    } else if (email != null) {
+      user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException("User is not exists"));
+    } else {
+      throw new IdOrEmailRequiredException("Id or email is required");
+    }
+
+    Page<Place> placePage = placeRepository.findByUser(user, pageable);
 
     return this.toPageResponse(placePage);
   }

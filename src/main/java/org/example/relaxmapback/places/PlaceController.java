@@ -27,14 +27,23 @@ public class PlaceController {
     return ResponseEntity.ok(placeService.getPlaceById(id));
   }
 
-  @GetMapping("/for-user")
-  public ResponseEntity<PageResponse<PlaceResponse>> getPlacesForUser(Authentication auth, Pageable pageable) {
-    return ResponseEntity.ok(placeService.getPlacesForUser(auth.getName(), pageable));
+  @GetMapping("/me")
+  public ResponseEntity<PageResponse<PlaceResponse>> getPlacesForMe(Authentication auth, Pageable pageable) {
+    return ResponseEntity.ok(placeService.getPlacesForMe(auth.getName(), pageable));
   }
 
   @GetMapping("/all")
   public ResponseEntity<PageResponse<PlaceResponse>> getAllPlaces(Pageable pageable) {
     return ResponseEntity.ok(placeService.getAllPlaces(pageable));
+  }
+
+  @GetMapping("/for-user")
+  public ResponseEntity<PageResponse<PlaceResponse>> getPlacesForUser(
+          @RequestParam(value = "id", required = false) Long id,
+          @RequestParam(value = "email", required = false) String email,
+          Pageable pageable
+  ) {
+    return ResponseEntity.ok(placeService.getPlacesForUser(id, email, pageable));
   }
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

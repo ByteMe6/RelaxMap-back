@@ -35,6 +35,7 @@ public class SecurityConfig {
                     .requestMatchers("/auth/is-valid").permitAll()
 
                     .requestMatchers("/places/all").permitAll()
+                    .requestMatchers("/places/for-user").permitAll()
 
                     .requestMatchers("/reviews/all").permitAll()
                     .requestMatchers("/reviews/for-place/{id}").permitAll()
