@@ -9,7 +9,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 
 storage:
   upload-dir: uploads/images
@@ -17,6 +17,3 @@ storage:
     - image/png
     - image/jpeg
   max-file-size: 1MB
-
-server:
-  port: 8080
