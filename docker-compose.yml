@@ -1,0 +1,40 @@
+services:
+
+  app:
+    build: .
+    restart: always
+
+    depends_on:
+      - postgres
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/relaxmapdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+    ports:
+      - '8080:8080'
+
+    networks:
+      app:
+
+  postgres:
+    image: postgres:latest
+    restart: always
+
+    environment:
+      POSTGRES_DB: relaxmapdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - '5432:5432'
+
+
+
+    networks:
+      app:
+
+networks:
+  app:
+    driver: 'bridge'

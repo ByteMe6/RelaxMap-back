@@ -3,9 +3,9 @@ spring:
     name: RelaxMap-back
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:postgres}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
@@ -19,4 +19,4 @@ storage:
   max-file-size: 1MB
 
 server:
-  port: ${PORT:8080}
+  port: 8080
