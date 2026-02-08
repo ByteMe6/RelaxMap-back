@@ -36,6 +36,8 @@ public class SecurityConfig {
 
                     .requestMatchers("/places/all").permitAll()
                     .requestMatchers("/places/for-user").permitAll()
+                    .requestMatchers("/places/{id}").permitAll()
+
 
                     .requestMatchers("/reviews/all").permitAll()
                     .requestMatchers("/reviews/for-place/{id}").permitAll()

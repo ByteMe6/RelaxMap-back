@@ -91,7 +91,8 @@ public class ReviewService {
                     review.getPlace().getPlaceType(),
                     review.getPlace().getRegion(),
                     review.getPlace().getImageName(),
-                    review.getPlace().getImageName()
+                    review.getPlace().getImageName(),
+                    new UserResponse(review.getUser().getId(), review.getUser().getName(), review.getUser().getEmail())
             )
     );
   }

@@ -17,6 +17,7 @@ import org.example.relaxmapback.reviews.ReviewRepository;
 import org.example.relaxmapback.storage.StorageProperties;
 import org.example.relaxmapback.users.User;
 import org.example.relaxmapback.users.UserRepository;
+import org.example.relaxmapback.users.dto.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -149,7 +150,8 @@ public class PlaceService {
             place.getPlaceType(),
             place.getRegion(),
             place.getDescription(),
-            place.getImageName()
+            place.getImageName(),
+            new UserResponse(place.getUser().getId(), place.getUser().getName(), place.getUser().getEmail())
     );
   }
 
