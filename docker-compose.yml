@@ -1,23 +1,20 @@
 services:
-
   app:
     build: .
     restart: always
     env_file:
       - .env
-
     depends_on:
       postgres:
         condition: service_healthy
-
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/relaxmap_db
       SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres}
-
+    volumes:
+      - uploads_data:/uploads/images
     ports:
       - '${SPRING_PORT:-8080}:8080'
-
     networks:
       app:
 
@@ -26,30 +23,26 @@ services:
     restart: always
     env_file:
       - .env
-
     environment:
       POSTGRES_DB: relaxmap_db
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-
     ports:
       - '${DB_PORT:-5432}:5432'
-
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
-
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql
-
     networks:
       app:
 
 volumes:
   postgres_data:
+  uploads_data:
 
 networks:
   app:
